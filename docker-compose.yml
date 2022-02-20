@@ -1,0 +1,34 @@
+version: '3.3'
+services:
+  db:
+    image: postgres
+    container_name: trans-db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - app
+  web:
+    build: ./
+    container_name: trans
+    ports:
+      - "3000:3000"
+      - "4000:4000"
+    networks:
+      - app
+    env_file:
+      - ./srcs/.env
+
+  adminer:
+    image: adminer
+    container_name: trans-adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
