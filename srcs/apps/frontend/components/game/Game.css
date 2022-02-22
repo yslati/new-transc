@@ -1,0 +1,50 @@
+canvas {
+  display: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@font-face {
+  font-family: "game-font";
+  src: url("../public/f.ttf");
+}
+
+.game-btn {
+  width: 200px;
+  height: 50px;
+  margin: 10px 10px;
+  background-color: #00ffff00;
+  border-style: unset;
+  font-size: 1em;
+  font-family: "game-font";
+  font-size: 1em;
+}
+
+.game-btn:hover {
+  background-color: black;
+  color: white;
+}
+
+.game-list-btn {
+}
+
+.game-control {
+  width: 1100px;
+  height: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #54d188;
+}
+
+.game-sub-control {
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.wait-gif {
+  flex-direction: column;
+  display: none;
+}

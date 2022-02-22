@@ -10,18 +10,6 @@ services:
       - "5432:5432"
     networks:
       - app
-  web:
-    build: ./
-    container_name: trans
-    volumes:
-        - /Users/abel-mak/.Desktop/typescript/new-transc/srcs/apps:/apps
-    ports:
-      - "3000:3000"
-      - "4000:4000"
-    networks:
-      - app
-    env_file:
-      - ./srcs/.env
 
   adminer:
     image: adminer

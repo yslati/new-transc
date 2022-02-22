@@ -119,7 +119,7 @@ const Navbar = () => {
 								<a href="#/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-md">Your Profile</a>
 								<a onClick={() => setOpenSettings(true)} className="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ">Settings</a>
 								{/* <a onClick={destoryCookie} className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-md">Sign out</a> */}
-								<a href="BACKEND_URL/auth/logout" className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-md">Sign out</a>
+								<a href="http://localhost:4000/auth/logout" className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-md">Sign out</a>
 							</div>}
 						</div>
 					</div>
