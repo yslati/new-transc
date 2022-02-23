@@ -2,6 +2,11 @@ import React, {useRef , useEffect, useState} from 'react';
 import {io} from 'socket.io-client';
 import logo from './logo.svg';
 import {useSocket} from '../../providers/SocketProvider';
+import Swal from "sweetalert2";
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { cancelJoin } from "../../app/features/game";
+
 
 //import './Game.css';
 
@@ -126,6 +131,8 @@ interface IFrame
 
 function Game()
 {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const socket = useSocket(); 
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const initialState = 
@@ -140,8 +147,12 @@ function Game()
 				my: MIDDLE_PADDLE_INIT_Y,
 			},
 			score: {
-				p1: 0,
-				p2: 0,
+      			p1: 0,
+      			username1: '',
+      			image1: '',
+      			p2: 0,
+      			username2: '',
+      			image2: '',
 			},
 			state: "NOTHING",
 			hasMiddlePaddle: false,
@@ -151,7 +162,10 @@ function Game()
 	const gameListBtnRef :React.RefObject<HTMLDivElement> = React.createRef(); 
 	const controlRef :React.RefObject<HTMLDivElement> = React.createRef(); 
 	const imgRef : React.RefObject<HTMLDivElement> = React.createRef();
-		
+	const quitRef : React.RefObject<HTMLDivElement> = React.createRef();
+	const player1Ref: React.RefObject<HTMLSpanElement> = React.createRef();		
+	const player2Ref: React.RefObject<HTMLSpanElement> = React.createRef();		
+
 	const startGame = function(){
 		socket.emit("join_queue_match", "dual");
 		if (gameListBtnRef != null)
@@ -163,7 +177,6 @@ function Game()
 	}
 
 	useEffect(function (){
-			console.log(socket);
 		socket.on("state", function (newFrame : any)
 		{
 			setFrame(newFrame);
@@ -174,6 +187,27 @@ function Game()
 	}, [socket]);
 
 
+	const quit = async function ()
+	{
+		const result = await Swal.fire({
+	      		title: 'Are you sure?',
+	      		text: "You will lose your score!",
+	      		icon: 'warning',
+	      		showCancelButton: true,
+	      		confirmButtonColor: '#DD5454',
+	      		cancelButtonColor: '#3085d6',
+	      		confirmButtonText: 'Yes, leave!'		
+			});
+		if (result.isConfirmed)
+		{
+			socket.emit('leave_game');
+			dispatch(cancelJoin());
+			setFrame({...initialState});
+			navigate('/game');
+		}
+			
+	}
+	
 	useEffect(function ()
 		{
 			document.addEventListener("keydown", (e) =>
@@ -213,6 +247,10 @@ function Game()
 			{
 				if (canvas)
 					canvas.style.display = "block";
+				
+				if (quitRef != null)
+					if (quitRef.current != null)
+						quitRef.current.style.display = "flex";
 
 				if (controlRef != null)
 					if (controlRef.current != null)
@@ -235,31 +273,34 @@ function Game()
 				paddleRight.drawWithCircle();
 				ball.draw();
 			}
-			else
-			{
-
-			}
 		}, [frame]);
 
 	return (
 		<div>
-		<canvas width={WIDTH} height={HEIGHT} ref={canvasRef}/>
-		<div ref={controlRef} className="game-control">
-		<div className="game-sub-control">
-		<div ref={gameListBtnRef} className="game-list-btn">
-		<button className="game-btn"
-		onClick={startGame}>
-		start game</button>
-		<br/>
-		<button className="game-btn">start game(with obstacle)</button>
+		<div className="container board">
+		<span ref={player1Ref}>{frame.score.username1}</span>
+		<span ref={player2Ref}>{frame.score.username2}</span>
 		</div>
-		<div ref={imgRef}className="wait-gif">
-		<b>waiting for opponent...</b>
-		<img  src="./waiting.gif"/>
-		</div>
-		</div>
-		</div>
-		</div>
+          <canvas width={WIDTH} height={HEIGHT} ref={canvasRef}/>
+          <div ref={controlRef} className="game-control">
+             <div className="game-sub-control">
+                <div ref={gameListBtnRef} className="game-list-btn">
+                   <button className="game-btn"
+                      onClick={startGame}>
+                   start game</button>
+                   <br/>
+                   <button className="game-btn">start game with obstacle</button>
+                </div>
+                <div ref={imgRef}className="wait-gif">
+                   <b>waiting for opponent...</b>
+                   <img  src="./waiting.gif"/>
+                </div>
+             </div>
+          </div>
+		  <div ref={quitRef} className="container quit-container-btn">
+		    <button className="quit-btn" onClick={quit}>quit</button>
+		  </div>
+       </div>
 	);
 }
 export default Game;
