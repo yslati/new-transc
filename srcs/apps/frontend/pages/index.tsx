@@ -17,6 +17,8 @@ import Users from '../components/users/Users';
 import Admin from "../components/admin/Admin";
 import Navbar from "../components/Navbar";
 import Game, { UserType } from '../components/game/Game';
+import Game1 from '../components/game/Game1';/***********/
+import Watch from '../components/game/Watch';
 import TwoFA from '../components/login/TwoFA';
 import LiveGames from '../components/game/LiveGames';
 import { SocketProvider, useSocket } from '../providers/SocketProvider';
@@ -111,7 +113,7 @@ function Home() {
           } />
           <Route path="/watch" element= {
             <Protected>
-              <Game userType={UserType.Spectator}  />
+              <Watch userType={UserType.Spectator}  />
             </Protected>
           } />
           <Route path="/admin" element= {

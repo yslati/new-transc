@@ -277,7 +277,7 @@ const Game = ({ userType }: { userType: UserType }) => {
         else {
           // tell the spectator who won
           draw_text(
-            (frame.score.p1 === 10 ? frame.score.username1 : frame.score.username2) + " Won",
+            (frame.score.p1 > frame.score.p2 ? frame.score.username1 : frame.score.username2) + " Won",
             "#00FF15",
             "40px Arcade Normal",
             WIDTH / 2 - 150,

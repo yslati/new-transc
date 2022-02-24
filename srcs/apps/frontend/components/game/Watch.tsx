@@ -4,15 +4,8 @@ import logo from './logo.svg';
 import {useSocket} from '../../providers/SocketProvider';
 import Swal from "sweetalert2";
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { cancelJoin } from "../../app/features/game";
-
-
-export enum UserType
-{
-	Player,
-	Spectator
-}
 
 const WIDTH = 1100;
 const HEIGHT = 600;
@@ -127,8 +120,7 @@ interface IFrame
 	message?: string
 }
 
-
-function Game()
+function Watch()
 {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -158,52 +150,7 @@ function Game()
 			hasWon: false
 		};
 	const [frame, setFrame] = useState<IFrame>(initialState);
-	const gameListBtnRef :React.RefObject<HTMLDivElement> = React.createRef(); 
-	const controlRef :React.RefObject<HTMLDivElement> = React.createRef(); 
-	const imgRef : React.RefObject<HTMLDivElement> = React.createRef();
-	const quitRef : React.RefObject<HTMLDivElement> = React.createRef();
-
-	const startGame = function(gameType: string){
-		socket.emit("join_queue_match", gameType);
-		if (gameListBtnRef != null)
-			if (gameListBtnRef.current != null)
-			gameListBtnRef.current.style.display = "none";
-		if (imgRef != null)
-			if (imgRef.current != null)
-				imgRef.current.style.display = "flex";
-	}
-
-	useEffect(function (){
-		socket.on("state", function (newFrame : any)
-		{
-			setFrame(newFrame);
-		});
-		return (() => {
-			socket.off("state")
-		});
-	}, [socket]);
-
-
-	const quit = async function ()
-	{
-		const result = await Swal.fire({
-	      		title: 'Are you sure?',
-	      		text: "You will lose your score!",
-	      		icon: 'warning',
-	      		showCancelButton: true,
-	      		confirmButtonColor: '#DD5454',
-	      		cancelButtonColor: '#3085d6',
-	      		confirmButtonText: 'Yes, leave!'		
-			});
-		if (result.isConfirmed)
-		{
-			socket.emit('leave_game');
-			dispatch(cancelJoin());
-			setFrame({...initialState});
-			navigate('/game');
-		}
-			
-	}
+  	const { state } = useLocation();
 	
 	const gameOver = function (ctx: CanvasRenderingContext2D, text: string)
 	{
@@ -218,31 +165,21 @@ function Game()
 		ctx.closePath();
 	}
 
+	useEffect(function (){
+		socket.on("state", function (newFrame : any)
+		{
+			setFrame(newFrame);
+		});
+		return (() => {
+			socket.off("state")
+		});
+	}, [socket]);
+
 	useEffect(function ()
 		{
-			document.addEventListener("keydown", (e) =>
-				{
-					if (e.code === "ArrowUp")
-					{
-						socket.emit("up_paddle", "down");
-					}
-					else if (e.code === "ArrowDown")
-					{
-						socket.emit("down_paddle", "down");
-					}
-				});
-			document.addEventListener("keyup", (e) =>
-				{
-					if (e.code === "ArrowUp")
-					{
-						socket.emit("up_paddle", "up");
-					}
-					else if (e.code === "ArrowDown")
-					{
-						socket.emit("down_paddle", "up");
-					}
-				});
-		}, []);
+    	socket.emit("spectator", state);
+    	socket.off("spectator");
+	}, [])
 
 	useEffect(function ()
 		{
@@ -259,14 +196,6 @@ function Game()
 			{
 				if (canvas)
 					canvas.style.display = "block";
-
-				if (quitRef != null)
-					if (quitRef.current != null)
-						quitRef.current.style.display = "flex";
-
-				if (controlRef != null)
-					if (controlRef.current != null)
-						controlRef.current.style.display = "none";	
 
 				const background = new Rect(ctx, 0, 0, ctx.canvas.width,
 					ctx.canvas.height, "rgb(84 209 136)");
@@ -298,34 +227,18 @@ function Game()
 			{
 				if (canvas)
 					canvas.style.display = "none";	
-				if (quitRef != null)
-					if (quitRef.current != null)
-						quitRef.current.style.display = "none";
-
-				if (controlRef != null)
-					if (controlRef.current != null)
-						controlRef.current.style.display = "block";	
-				if (gameListBtnRef != null)
-					if (gameListBtnRef.current != null)
-						gameListBtnRef.current.style.display = "block";
-				if (imgRef != null)
-					if (imgRef.current != null)
-						imgRef.current.style.display = "none";
-
 			}
 			else if (ctx != null && frame.state == GameState.OVER)
 			{
 				const background = new Rect(ctx, 0, 0, ctx.canvas.width,
 					ctx.canvas.height, "rgb(84 209 136)");
 
-				if (quitRef != null)
-					if (quitRef.current != null)
-						quitRef.current.style.display = "none";
+				console.log(frame);
 				background.draw();
-				if (frame.hasWon == true)
-					gameOver(ctx, "YOU WON");
+				if (frame.p1 > frame.p2)
+					gameOver(ctx, frame.score.username1 + " WON");
 				else
-					gameOver(ctx, "YOU LOST");
+					gameOver(ctx, frame.score.username1 + " WON");
 				setTimeout(() =>
 					{
       					dispatch(cancelJoin());
@@ -334,43 +247,27 @@ function Game()
 					}, 3000);
 			}
 		}, [frame]);
-
+		
 	return (
 		<div>
-		<div className="container board">
-		{ (frame.state != GameState.WAITING) ?
-			<div className="container board-wrap">
-			<div className="board-info">
-			<span>{frame.score.username1}</span>
-			<span>{frame.score.p1}</span>
-			</div>
-			<div className="board-info">
-			<span>{frame.score.username2}</span>
-			<span>{frame.score.p2}</span>
-			</div>
-			</div>
-			: ""}
-		</div>
-		<canvas className="my-canvas" width={WIDTH} height={HEIGHT} ref={canvasRef}/>
-		<div ref={controlRef} className="game-control">
-		<div className="game-sub-control">
-		<div ref={gameListBtnRef} className="game-list-btn">
-		<button className="game-btn" onClick={() => startGame("dual")}>
-		start game</button>
-		<br/>
-		<button className="game-btn" onClick={()=> startGame("triple")}>
-		start game with obstacle</button>
-		</div>
-		<div ref={imgRef}className="wait-gif">
-		<b>waiting for opponent...</b>
-		<img  src="./waiting.gif"/>
-		</div>
-		</div>
-		</div>
-		<div ref={quitRef} className="container quit-container-btn">
-		<button className="quit-btn" onClick={quit}>quit</button>
-		</div>
-		</div>
+          <div className="container board">
+             { (frame.state != GameState.WAITING) ?
+             <div className="container board-wrap">
+                <div className="board-info">
+                   <span>{frame.score.username1}</span>
+                   <span>{frame.score.p1}</span>
+                </div>
+                <div className="board-info">
+                   <span>{frame.score.username2}</span>
+                   <span>{frame.score.p2}</span>
+                </div>
+             </div>
+             : ""}
+          </div>
+          <canvas className="my-canvas" width={WIDTH} 
+		height={HEIGHT} ref={canvasRef}/>
+       </div>
 	);
 }
-export default Game;
+
+export default Watch;
