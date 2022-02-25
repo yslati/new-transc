@@ -102,7 +102,7 @@ const Navbar = () => {
               <Link to="/" className="flex-shrink-0 flex items-center">
                 <img
                   className="hidden lg:block h-8 w-auto "
-                  src="./images/mobileLogo.png"
+                  src="./images/favicon.png"
                   alt=""
                 />
               </Link>
