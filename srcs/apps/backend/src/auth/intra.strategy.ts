@@ -10,7 +10,7 @@ export default class IntraStrategy extends PassportStrategy(Strategy) {
         super({
             clientID: process.env.INTRA_CLIENT_ID,
             clientSecret: process.env.INTRA_SECRET_ID,
-			callbackURL: `${process.env.BACKEND_URL}/auth`,
+			callbackURL: `http://localhost:4000/auth`,
             scope: 'public'
         });
     }

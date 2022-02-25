@@ -7,6 +7,8 @@ import '../styles/Carousel.css'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
+import '../styles/gameStyle.css'
+
 
 function SafeHydrate({ children }) {
   return (

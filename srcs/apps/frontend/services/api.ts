@@ -1,7 +1,7 @@
 import Axios from "axios";
 import Cookies from "js-cookie";
 
-export const url = "BACKEND_URL";
+export const url = "http://localhost:4000";
 
 let token_jwt = Cookies.get('token') || null;
 

@@ -1,18 +1,14 @@
-import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 
 const Redirect = ({ to }) => {
+  const router = useRouter();
 
-    const router = useRouter();
-    useEffect(() => {
-            router.push('/login');
-    }, [])
+  useEffect(() => {
+    router.push("/login");
+  }, []);
 
-    return (
-        <>
-            
-        </>
-    )
-}
+  return <></>;
+};
 
-export default Redirect
+export default Redirect;

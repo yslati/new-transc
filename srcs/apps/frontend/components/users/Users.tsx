@@ -15,7 +15,7 @@ const Users = () => {
 	}, [usersState.users.length]);
 
 	return (
-		<div className="w-screen h-screen p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+		<div className="w-screen bg-yellow-50 h-screen p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
 			{ usersState.users.length ?
 				usersState?.users?.map(user =>  <UserCard key={user.id} user={user} /> )
 				: <div className="text-xl font-light text-gray-700">No users</div>

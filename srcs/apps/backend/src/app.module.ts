@@ -1,4 +1,4 @@
-import {  Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -30,6 +30,9 @@ import { ChannelsGateway } from './channels.gateway';
 import { ChatService } from './chat/chat.service';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   imports: [
@@ -38,26 +41,42 @@ import { UsersService } from './users/users.service';
       rootPath: join(__dirname, '..', 'uploads'),
     }),
     MulterModule.register({
-      dest: './uploads'
+      dest: './uploads',
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: '192.168.99.116',
+      host: '192.168.99.101',
       port: 5432,
       username: 'postgres',
       password: 'postgres',
       database: 'postgres',
-      entities: [User, Channel, UserChannel, Message, UserFriend, Conversation, Game],
+      entities: [
+        User,
+        Channel,
+        UserChannel,
+        Message,
+        UserFriend,
+        Conversation,
+        Game,
+      ],
       synchronize: true,
-      autoLoadEntities: true
+      autoLoadEntities: true,
     }),
-    TypeOrmModule.forFeature([Channel, User, UserChannel, Message, UserFriend, Conversation, Game]),
+    TypeOrmModule.forFeature([
+      Channel,
+      User,
+      UserChannel,
+      Message,
+      UserFriend,
+      Conversation,
+      Game,
+    ]),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     JwtModule.register({
       secret: 'process.env.JWT_SECRET_KEY',
-      signOptions: { expiresIn: 60*60*25 }
+      signOptions: { expiresIn: 60 * 60 * 25 },
     }),
     UsersModule,
     ChannelsModule,
@@ -66,7 +85,7 @@ import { UsersService } from './users/users.service';
     GameModule,
     AdminModule,
     ConversationModule,
-    MailModule
+    MailModule,
   ],
   controllers: [AppController],
   providers: [
@@ -74,11 +93,11 @@ import { UsersService } from './users/users.service';
     ChatGateway,
     {
       provide: APP_FILTER,
-      useClass: AllExceptionFilter
+      useClass: AllExceptionFilter,
     },
     ChannelsGateway,
     ChatService,
     UsersService,
-  ]
+  ],
 })
 export class AppModule {}

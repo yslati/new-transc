@@ -23,7 +23,7 @@ class Game {
   private _interval: NodeJS.Timer;
   private _endCallback: Function;
   private _isStarting = false;
-  private _notToSend?: number;
+
 
   constructor(
     player1: Player,
@@ -190,11 +190,10 @@ class Game {
 
   private broadcastState(): void {
     const currentState = this.buildGameStateObject();
-    if (this._notToSend !== 1)
+
       this._player1
         .getSocket()
         .emit('state', { ...currentState, hasWon: this.getWinner().id === this._player1.getUser().id });
-    if (this._notToSend !== 2)
       this._player2
         .getSocket()
         .emit('state', { ...currentState, hasWon: this.getWinner().id === this._player2.getUser().id });
@@ -297,13 +296,11 @@ class Game {
       this._player1.penalize();
       this._player2.award();
       this._winnerId = this._player2.getUser().id;
-      this._notToSend = 1;
       this._message = `${this._player1.getUser().displayName} left`;
     } else if (socket.id === this._player2.getSocket().id) {
       this._player2.penalize();
       this._player1.award();
       this._winnerId = this._player1.getUser().id;
-      this._notToSend = 2;
       this._message = `${this._player2.getUser().displayName} left`;
     }
     this.broadcastState();
