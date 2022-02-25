@@ -39,7 +39,7 @@ const HomePage = () => {
   }, [controls, inView]);
 
   return (
-    <div className="h-screen w-full bg-LBLUE overflow-y-auto  text-black">
+    <div className="h-screen w-full bg-yellow-50 overflow-y-auto  text-black">
       <header className="relative flex items-center justify-center h-screen mb-12 overflow-hidden">
         <motion.p
           variants={welcomeVariants}
