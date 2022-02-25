@@ -55,13 +55,13 @@ const InviteGame = ({ user, setInvite }) => {
 								<h2 className="text-center mx-auto text-xl font-semibold text-gray-600 tracking-wide">
 									Type of Game
 								</h2>
-								<div className='flex flex-col mt-5 space-y-4'>
-									<button id="btn_join" className="button button1 px-6 py-2"
+								<div className='flex'>
+									<button id="btn_join" className="game-btn"
 										onClick={()=>invite('dual')}
 									>
 										Dual Pong
 									</button>
-									<button id="btn_join" className="button button2 px-6 py-2"
+									<button id="btn_join" className="game-btn"
 										onClick={()=>invite('triple')}
 									>
 										Triple Pong

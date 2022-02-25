@@ -110,7 +110,7 @@ export class UsersController {
         }),
     }))
     uploadAvatar(@Req() req, @UploadedFile() file: Express.Multer.File): Promise<User> {
-        return this.userService.uploadAvatar(req.user.user, process.env.BACKEND_URL + file.filename);
+        return this.userService.uploadAvatar(req.user.user, process.env.BACKEND_URL + '/' + file.filename);
     }
 
     // FRIEND REQUEST

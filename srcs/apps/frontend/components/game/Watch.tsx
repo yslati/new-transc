@@ -4,9 +4,8 @@ import logo from "./logo.svg";
 import { useSocket } from "../../providers/SocketProvider";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
-import { cancelJoin, joinGame } from "../../app/features/game";
-import { useAppSelector } from "../../app/hooks";
+import { useNavigate, useLocation } from "react-router";
+import { cancelJoin } from "../../app/features/game";
 
 const WIDTH = 1100;
 const HEIGHT = 600;
@@ -130,13 +129,11 @@ interface IFrame {
   message?: string;
 }
 
-function Game() {
+function Watch() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const socket = useSocket();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const joined = useAppSelector((state) => state.game.joined);
-
   const initialState = {
     ball: {
       x: WIDTH / 2,
@@ -160,14 +157,17 @@ function Game() {
     hasWon: false,
   };
   const [frame, setFrame] = useState<IFrame>(initialState);
-  const gameListBtnRef: React.RefObject<HTMLDivElement> = React.createRef();
-  const controlRef: React.RefObject<HTMLDivElement> = React.createRef();
-  const imgRef: React.RefObject<HTMLDivElement> = React.createRef();
-  const quitRef: React.RefObject<HTMLDivElement> = React.createRef();
+  const { state } = useLocation();
 
-  const startGame = function (gameType: string) {
-    socket.emit("join_queue_match", gameType);
-    dispatch(joinGame());
+  const gameOver = function (ctx: CanvasRenderingContext2D, text: string) {
+    ctx.beginPath();
+    ctx.font = "30px game-font";
+    ctx.fillStyle = "black";
+
+    const metrics = ctx.measureText(text);
+
+    ctx.fillText(text, WIDTH / 2 - metrics.width / 2, 50);
+    ctx.closePath();
   };
 
   useEffect(
@@ -182,50 +182,13 @@ function Game() {
     [socket]
   );
 
-  const quit = async function () {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You will lose your score!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#DD5454",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, leave!",
-    });
-    if (result.isConfirmed) {
-      socket.emit("leave_game");
-      dispatch(cancelJoin());
-      //setFrame({...initialState});
-      navigate("/game");
-    }
-  };
-
-  const gameOver = function (ctx: CanvasRenderingContext2D, text: string) {
-    ctx.beginPath();
-    ctx.font = "30px game-font";
-    ctx.fillStyle = "black";
-
-    const metrics = ctx.measureText(text);
-
-    ctx.fillText(text, WIDTH / 2 - metrics.width / 2, 50);
-    ctx.closePath();
-  };
-
   useEffect(function () {
-    document.addEventListener("keydown", (e) => {
-      if (e.code === "ArrowUp") {
-        socket.emit("up_paddle", "down");
-      } else if (e.code === "ArrowDown") {
-        socket.emit("down_paddle", "down");
-      }
-    });
-    document.addEventListener("keyup", (e) => {
-      if (e.code === "ArrowUp") {
-        socket.emit("up_paddle", "up");
-      } else if (e.code === "ArrowDown") {
-        socket.emit("down_paddle", "up");
-      }
-    });
+    if (!state) {
+      navigate("/liveGames");
+      return;
+    }
+    socket.emit("spectator", state);
+    socket.off("spectator");
   }, []);
 
   useEffect(
@@ -242,13 +205,6 @@ function Game() {
         frame.state != GameState.OVER
       ) {
         if (canvas) canvas.style.display = "block";
-
-        if (quitRef != null && frame.state == GameState.PLAYING)
-          if (quitRef.current != null) quitRef.current.style.display = "flex";
-
-        if (controlRef != null)
-          if (controlRef.current != null)
-            controlRef.current.style.display = "none";
 
         const background = new Rect(
           ctx,
@@ -297,15 +253,6 @@ function Game() {
         }
       } else if (frame.state == GameState.WAITING) {
         if (canvas) canvas.style.display = "none";
-        if (quitRef != null)
-          if (quitRef.current != null) quitRef.current.style.display = "none";
-
-        if (controlRef != null)
-          if (controlRef.current != null)
-            controlRef.current.style.display = "block";
-        if (gameListBtnRef != null)
-          if (gameListBtnRef.current != null)
-            gameListBtnRef.current.style.display = "block";
       } else if (ctx != null && frame.state == GameState.OVER) {
         const background = new Rect(
           ctx,
@@ -316,15 +263,13 @@ function Game() {
           "rgb(84 209 136)"
         );
 
-        if (quitRef != null)
-          if (quitRef.current != null) quitRef.current.style.display = "none";
         background.draw();
-        if (frame.hasWon == true) gameOver(ctx, "YOU WON");
-        else gameOver(ctx, "YOU LOST");
+        if (frame.p1 > frame.p2) gameOver(ctx, frame.score.username1 + " WON");
+        else gameOver(ctx, frame.score.username2 + " WON");
         setTimeout(() => {
           dispatch(cancelJoin());
           setFrame({ ...initialState });
-          navigate("/game");
+          navigate("/liveGames");
         }, 3000);
       }
     },
@@ -355,32 +300,8 @@ function Game() {
         height={HEIGHT}
         ref={canvasRef}
       />
-      <div ref={controlRef} className="game-control">
-        <div className="game-sub-control">
-          {!joined ? (
-            <div ref={gameListBtnRef} className="game-list-btn">
-              <button className="game-btn" onClick={() => startGame("dual")}>
-                DUAL PONG
-              </button>
-              <br />
-              <button className="game-btn" onClick={() => startGame("triple")}>
-                TRIPLE PONG
-              </button>
-            </div>
-          ) : (
-            <div ref={imgRef} className="wait-gif">
-              <b>waiting for opponent...</b>
-              <img src="./waiting.gif" />
-            </div>
-          )}
-        </div>
-      </div>
-      <div ref={quitRef} className="container quit-container-btn">
-        <button className="quit-btn" onClick={quit}>
-          quit
-        </button>
-      </div>
     </div>
   );
 }
-export default Game;
+
+export default Watch;

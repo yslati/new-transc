@@ -30,6 +30,10 @@ import { ChannelsGateway } from './channels.gateway';
 import { ChatService } from './chat/chat.service';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 
 @Module({
   imports: [
@@ -42,7 +46,7 @@ import { UsersService } from './users/users.service';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: '192.168.99.116',
+      host: process.env.IP,
       port: 5432,
       username: 'postgres',
       password: 'postgres',
