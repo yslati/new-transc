@@ -5,8 +5,8 @@ import {useSocket} from '../../providers/SocketProvider';
 import Swal from "sweetalert2";
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { cancelJoin } from "../../app/features/game";
-
+import { cancelJoin, joinGame } from "../../app/features/game";
+import { useAppSelector } from '../../app/hooks';
 
 export enum UserType
 {
@@ -134,6 +134,8 @@ function Game()
 	const navigate = useNavigate();
 	const socket = useSocket(); 
 	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const joined = useAppSelector(state => state.game.joined);
+
 	const initialState = 
 		{
 			ball: {
@@ -165,12 +167,13 @@ function Game()
 
 	const startGame = function(gameType: string){
 		socket.emit("join_queue_match", gameType);
-		if (gameListBtnRef != null)
-			if (gameListBtnRef.current != null)
-			gameListBtnRef.current.style.display = "none";
-		if (imgRef != null)
-			if (imgRef.current != null)
-				imgRef.current.style.display = "flex";
+		dispatch(joinGame());
+	//	if (gameListBtnRef != null)
+	//		if (gameListBtnRef.current != null)
+	//		gameListBtnRef.current.style.display = "none";
+	//	if (imgRef != null)
+	//		if (imgRef.current != null)
+	//			imgRef.current.style.display = "flex";
 	}
 
 	useEffect(function (){
@@ -197,9 +200,9 @@ function Game()
 			});
 		if (result.isConfirmed)
 		{
-			socket.emit('leave_game');
+			socket.emit('leave_game');	
 			dispatch(cancelJoin());
-			setFrame({...initialState});
+			//setFrame({...initialState});
 			navigate('/game');
 		}
 			
@@ -246,7 +249,7 @@ function Game()
 
 	useEffect(function ()
 		{
-			console.log(GameState[frame.state]);
+			//console.log(frame);
 			if (canvasRef == null)
 			{
 				return;
@@ -260,7 +263,7 @@ function Game()
 				if (canvas)
 					canvas.style.display = "block";
 
-				if (quitRef != null)
+				if (quitRef != null && frame.state == GameState.PLAYING)
 					if (quitRef.current != null)
 						quitRef.current.style.display = "flex";
 
@@ -308,9 +311,9 @@ function Game()
 				if (gameListBtnRef != null)
 					if (gameListBtnRef.current != null)
 						gameListBtnRef.current.style.display = "block";
-				if (imgRef != null)
-					if (imgRef.current != null)
-						imgRef.current.style.display = "none";
+			//	if (imgRef != null)
+			//		if (imgRef.current != null)
+			//			imgRef.current.style.display = "none";
 
 			}
 			else if (ctx != null && frame.state == GameState.OVER)
@@ -337,40 +340,43 @@ function Game()
 
 	return (
 		<div>
-		<div className="container board">
-		{ (frame.state != GameState.WAITING) ?
-			<div className="container board-wrap">
-			<div className="board-info">
-			<span>{frame.score.username1}</span>
-			<span>{frame.score.p1}</span>
-			</div>
-			<div className="board-info">
-			<span>{frame.score.username2}</span>
-			<span>{frame.score.p2}</span>
-			</div>
-			</div>
-			: ""}
-		</div>
-		<canvas className="my-canvas" width={WIDTH} height={HEIGHT} ref={canvasRef}/>
-		<div ref={controlRef} className="game-control">
-		<div className="game-sub-control">
-		<div ref={gameListBtnRef} className="game-list-btn">
-		<button className="game-btn" onClick={() => startGame("dual")}>
-		start game</button>
-		<br/>
-		<button className="game-btn" onClick={()=> startGame("triple")}>
-		start game with obstacle</button>
-		</div>
-		<div ref={imgRef}className="wait-gif">
-		<b>waiting for opponent...</b>
-		<img  src="./waiting.gif"/>
-		</div>
-		</div>
-		</div>
-		<div ref={quitRef} className="container quit-container-btn">
-		<button className="quit-btn" onClick={quit}>quit</button>
-		</div>
-		</div>
+          <div className="container board">
+             { (frame.state != GameState.WAITING) ?
+             <div className="container board-wrap">
+                <div className="board-info">
+                   <span>{frame.score.username1}</span>
+                   <span>{frame.score.p1}</span>
+                </div>
+                <div className="board-info">
+                   <span>{frame.score.username2}</span>
+                   <span>{frame.score.p2}</span>
+                </div>
+             </div>
+             : ""}
+          </div>
+          <canvas className="my-canvas" width={WIDTH} height={HEIGHT} ref={canvasRef}/>
+          <div ref={controlRef} className="game-control">
+             <div className="game-sub-control">
+			{ (!joined) ?
+                <div ref={gameListBtnRef} className="game-list-btn">
+                   <button className="game-btn" onClick={() => startGame("dual")}>
+                   DUAL PONG</button>
+                   <br/>
+                   <button className="game-btn" onClick={()=> startGame("triple")}>
+                   TRIPLE PONG</button>
+                </div>
+				:
+                <div ref={imgRef}className="wait-gif">
+                   <b>waiting for opponent...</b>
+                   <img  src="./waiting.gif"/>
+                </div>
+			}
+             </div>
+          </div>
+          <div ref={quitRef} className="container quit-container-btn">
+             <button className="quit-btn" onClick={quit}>quit</button>
+          </div>
+       </div>
 	);
 }
 export default Game;

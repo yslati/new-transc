@@ -152,6 +152,7 @@ function Watch()
 	const [frame, setFrame] = useState<IFrame>(initialState);
   	const { state } = useLocation();
 	
+
 	const gameOver = function (ctx: CanvasRenderingContext2D, text: string)
 	{
 		
@@ -177,13 +178,14 @@ function Watch()
 
 	useEffect(function ()
 		{
+			if (!state)
+				navigate("/liveGames");
     	socket.emit("spectator", state);
     	socket.off("spectator");
 	}, [])
 
 	useEffect(function ()
 		{
-			console.log(GameState[frame.state]);
 			if (canvasRef == null)
 			{
 				return;
@@ -233,17 +235,16 @@ function Watch()
 				const background = new Rect(ctx, 0, 0, ctx.canvas.width,
 					ctx.canvas.height, "rgb(84 209 136)");
 
-				console.log(frame);
 				background.draw();
 				if (frame.p1 > frame.p2)
 					gameOver(ctx, frame.score.username1 + " WON");
 				else
-					gameOver(ctx, frame.score.username1 + " WON");
+					gameOver(ctx, frame.score.username2 + " WON");
 				setTimeout(() =>
 					{
       					dispatch(cancelJoin());
 						setFrame({...initialState})
-      					navigate('/game');
+      					navigate('/liveGames');
 					}, 3000);
 			}
 		}, [frame]);

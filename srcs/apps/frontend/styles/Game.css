@@ -14,7 +14,7 @@
   max-width: 50%;
   justify-content: space-between;
   height: 100px;
-  border: black solid 1px;
+  /*border: black solid 1px;*/
 }
 
 .board-wrap {
@@ -99,5 +99,5 @@
 
 .wait-gif {
   flex-direction: column;
-  display: none;
+  /*display: none;*/
 }
