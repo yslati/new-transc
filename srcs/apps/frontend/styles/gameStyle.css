@@ -1,0 +1,100 @@
+.my-canvas {
+    display: none;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  @font-face {
+    font-family: "game-font";
+    src: url("../public/f.ttf");
+  }
+  
+  .board {
+    display: flex;
+    max-width: 50%;
+    justify-content: space-between;
+    height: 100px;
+    /*border: black solid 1px;*/
+  }
+  
+  .board-wrap {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .board-info {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
+    border: black solid 1px;
+    text-align: center;
+    font-family: game-font;
+    font-size: 1.5em;
+  }
+  
+  .container {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .quit-container-btn {
+    max-width: 10%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .quit-btn {
+    margin-top: 1em;
+    width: 200px;
+    height: 50px;
+    background-color: rgb(253 230 138);
+    color: black;
+    font-family: "game-font";
+  }
+  
+  .quit-btn:hover {
+    background-color: black;
+    color: rgb(253 230 138);
+  }
+  
+  /* 'Arcade Normal', sans-serif */
+  
+  .game-btn {
+    width: 200px;
+    height: 50px;
+    margin: 10px 10px;
+    background-color: #00ffff00;
+    border-style: unset;
+    font-size: 1em;
+    font-family: "game-font";
+    font-size: 1em;
+  }
+  
+  .game-btn:hover {
+    background-color: black;
+    color: white;
+  }
+  
+  .game-control {
+    width: 1100px;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgb(253 230 138);
+  }
+  
+  .game-sub-control {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .wait-gif {
+    flex-direction: column;
+    /*display: none;*/
+  }
