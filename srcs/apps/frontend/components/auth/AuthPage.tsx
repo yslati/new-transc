@@ -1,4 +1,3 @@
-import { LockClosedIcon } from '@heroicons/react/outline'
 import React, { useState } from 'react'
 import { useAppSelector } from '../../app/hooks'
 
@@ -24,9 +23,9 @@ const AuthPage = () => {
 					<input onChange={(e) => setPinCode(e.target.value)}
 						value={pinCode} minLength={6} maxLength={6} required
 						className="mb-5 tracking-widest font-medium border border-gray-400 appearance-none border-b-2 rounded py-2 px-4 text-gray-700 leading-tight focus:outline-none 
-						focus:bg-white focus:border-purple-500" name="pinCode" id="pinCode" type="text" placeholder="6-digit code" />
+						focus:bg-white focus:border-yellow-500" name="pinCode" id="pinCode" type="text" placeholder="6-digit code" />
 
-					<button type="submit" className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded mt-auto">
+					<button type="submit" className="shadow bg-yellow-500 hover:bg-yellow-400 focus:shadow-outline focus:outline-none text-black font-bold py-2 px-4 rounded mt-auto">
 						Sign In Securely
 					</button>
 				</form>

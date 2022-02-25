@@ -84,10 +84,10 @@ const Settings = () => {
 						<form onSubmit={handleSubmit} className="h-60 md:h-52 mx-auto flex flex-col mt-6">
 							<div className="md:flex md:items-center mb-3">
 								<div className="md:w-1/3">
-									<label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">username</label>
+									<label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">Username</label>
 								</div>
 								<div className="md:w-2/3">
-									<input onChange={(e) => setUsername(e.target.value)} value={username} minLength={6} maxLength={8} className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="username" type="text" placeholder={auth.user.displayName} />
+									<input onChange={(e) => setUsername(e.target.value)} value={username} minLength={6} maxLength={8} className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-yellow-500" id="username" type="text" placeholder={auth.user.displayName} />
 								</div>
 							</div>
 							<div className="md:flex mt-3">
@@ -105,8 +105,8 @@ const Settings = () => {
 									</label>
 								</div>
 							</div>
-							<button disabled={loading} className="flex items-center shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded ml-auto mt-auto" type="submit">
-								save
+							<button disabled={loading} className="flex items-center shadow bg-yellow-500 hover:bg-yellow-400 focus:shadow-outline focus:outline-none text-black font-bold py-2 px-4 rounded ml-auto mt-auto" type="submit">
+								SAVE
 								{loading && <RefreshIcon className="ml-3 h-5 w-5 animate-spin" /> }
 							</button>
 							
