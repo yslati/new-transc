@@ -16,8 +16,7 @@ import Redirect from '../components/Redirect';
 import Users from '../components/users/Users';
 import Admin from "../components/admin/Admin";
 import Navbar from "../components/Navbar";
-import Game, { UserType } from '../components/game/Game';
-import Game1 from '../components/game/Game1';/***********/
+import Game from '../components/game/Game';
 import Watch from '../components/game/Watch';
 import TwoFA from '../components/login/TwoFA';
 import LiveGames from '../components/game/LiveGames';
@@ -103,7 +102,7 @@ function Home() {
           } />
           <Route path="/game" element= {
             <Protected>
-              <Game userType={UserType.Player} />
+              <Game/>
             </Protected>
           } />
           <Route path="/leaderboard" element= {
@@ -113,7 +112,7 @@ function Home() {
           } />
           <Route path="/watch" element= {
             <Protected>
-              <Watch userType={UserType.Spectator}  />
+              <Watch/>
             </Protected>
           } />
           <Route path="/admin" element= {
